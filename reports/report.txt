@@ -1,0 +1,62 @@
+EDA
+1. In basic understanding
+in eda part identified, no any missing values, no any dublication values
+
+2. Visualizing Trends in Energy Consumption
+Trend Plots (Raw + Smoothed)
+The first plot shows the raw appliance energy consumption over the entire period from mid-January to the end of May 2016. The series exhibits frequent sharp spikes, indicating short bursts of high energy usage, while the baseline consumption remains relatively low most of the time. The second plot displays the same data with a 1-day rolling mean overlaid. The smoothed line reveals that the overall trend is fairly stable across the 4.5 months, with no strong long-term increase or decrease. This suggests that energy consumption is primarily driven by daily and weekly patterns rather than a seasonal or progressive change over time.
+
+3. Seasonal Patterns – Daily Seasonality
+
+This line chart illustrates the average appliance energy consumption for each hour of the day. A clear daily pattern is visible. Energy usage remains low during the late night and early morning hours (from midnight to around 6 AM). Consumption starts rising after 7 AM, reaches a moderate peak around 11 AM, dips slightly in the afternoon, and then shows a strong peak between 5 PM and 7 PM. After 8 PM, the average consumption steadily declines. This pattern strongly reflects typical human activity cycles, with higher energy use during morning preparation and evening hours when people are at home and using appliances.
+
+4. Seasonal Patterns – Weekly Seasonality
+
+The bar chart presents the average appliance energy consumption for each day of the week. Monday shows the highest average consumption, followed closely by Friday and Saturday. Tuesday has the lowest average usage among the weekdays. Overall, the differences between days are moderate rather than extreme. This indicates that while there is some weekly variation in energy usage, the daily pattern (hour of the day) is more dominant than the day of the week effect.
+
+5. Combined Seasonal Pattern (Heatmap)
+
+The heatmap provides a combined view of energy consumption across both hour of the day and day of the week. Darker red shades represent higher average energy usage. A consistent pattern emerges: the evening hours (particularly 5 PM to 8 PM) show elevated consumption across almost all days. Monday evenings appear especially high. Night and early morning hours remain light-colored across the entire week, confirming low activity during those times. This visualization reinforces that the strongest seasonal pattern is the daily cycle, with a secondary, milder weekly effect.
+
+6. Correlation Analysis
+
+The correlation heatmap shows the linear relationships between key features and the target variable (Appliances). The strongest positive correlation with appliance energy consumption is observed with the lights feature (0.20), which makes intuitive sense as lighting usage often accompanies other appliance activity. Temperature and humidity sensors show relatively weak correlations with the target. However, the indoor temperature sensors (T1, T2, T3) are highly correlated with each other, and outdoor temperature (T_out) is also strongly related to indoor temperatures. Outdoor humidity (RH_out) shows a moderate negative correlation with temperatures. These findings suggest that while environmental features have some influence, many temperature sensors contain redundant information, and the lights feature is one of the more useful predictors.
+
+7. Distribution and Outliers (Box Plots)
+
+This set of box plots shows the distribution of appliance energy consumption for each hour of the day. The median consumption remains relatively low throughout most hours, but the presence of numerous high outliers is evident, especially during daytime and evening hours. The interquartile range expands notably in the late afternoon and evening (around 5 PM to 7 PM), indicating greater variability in energy usage during peak activity times. Night hours show both lower median values and fewer extreme outliers. This confirms that energy consumption is not only higher on average during certain hours but also more variable, which is an important characteristic to consider during modeling.
+
+
+
+1. Outlier detector
+In our dataset, we identified unusually high values in features such as Appliances, lights, and Visibility. We used IQR and Z-Score to detect these outliers, but IQR identified many more because these features were heavily right-skewed.
+
+Our main concern was that removing these values could result in losing genuine energy consumption patterns and creating gaps in our time-series data. For example, high energy consumption could happen when several appliances are used simultaneously.
+
+Therefore, we selected Clipping (Capping) instead of removing outliers. Clipping limits extreme values to a predefined boundary while keeping the original observations and timestamps. This helps reduce the influence of extreme values without losing important information.
+
+2.Feature Engineering
+   2.1 Time based feature
+   Energy consumption has strong daily and weekly patterns (as we saw in EDA). Creating time features helps the model understand when high or low consumption usually happens.
+   
+   Why Cyclical Encoding?
+   Hour 23 and Hour 0 are close in real life, but numerically they are far apart. sin and cos help the model understand this circular nature.
+
+   2.2 Lagged Features + ACF/PACF 
+   Past energy consumption is often the best predictor of future consumption. Lag features allow the model to look back in time
+   - From the PACF plot, lag 1 shows the strongest partial autocorrelation, followed by smaller but noticeable contributions from lags 2, 3, and some values up to lag 10. The ACF shows a gradual decay, indicating longer-term dependence. Therefore, lag features of 1, 2, 3, 6, 12, 18, and 36 steps were created to capture both short-term and medium-term temporal patterns in appliance energy consumption.
+
+   2.3 Rolling window feature 
+   Rolling features capture the recent trend and volatility of energy consumption. They help smooth short-term noise and give context to the model.
+   Why .shift(1)?
+   So that the current row’s value is not included in the rolling calculation (prevents leakage).
+
+   2.4 Interaction & Domain Features
+   These features add domain knowledge and capture relationships that individual features may miss.
+   Meaning:
+   temp_x_humidity → Combined effect of temperature and humidity
+   in_out_temp_diff → How different indoor climate is from outdoor
+   lights_on → Simple indicator if lights are being used
+
+   
+   
