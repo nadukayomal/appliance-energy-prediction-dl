@@ -1,0 +1,14 @@
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+torch
+torchmetrics
+statsmodels
+scipy
+joblib
+tqdm
+xgboost
+
+PyYAML>=6.0
