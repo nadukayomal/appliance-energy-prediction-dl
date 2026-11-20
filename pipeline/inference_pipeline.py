@@ -21,7 +21,7 @@ class InferencePipeline:
 
     def __init__(self) -> None:
         scaler_dir = ROOT_DIR / "artifacts/scalers"
-        self.ml_model_path = ROOT_DIR / "artifacts/models/best_ml_model.pkl"
+        self.ml_model_path = ROOT_DIR / "artifacts/models/best_ml_model.pkl" 
         self.scaler_x_path = scaler_dir / "scaler_X.pkl"
         self.scaler_y_path = scaler_dir / "scaler_y.pkl"
         self.selected_features_path = scaler_dir / "selected_features.pkl"
@@ -67,6 +67,7 @@ def main() -> dict[str, Any]:
     frame = frame.set_index("date").sort_index()
     required_rows = 36 + int(get_preprocessing()["sequence"]["time_steps"])
     history = frame.tail(required_rows).copy()
+
     return InferencePipeline().predict_for_context(history)
 
 
