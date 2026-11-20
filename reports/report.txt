@@ -58,5 +58,26 @@ Therefore, we selected Clipping (Capping) instead of removing outliers. Clipping
    in_out_temp_diff → How different indoor climate is from outdoor
    lights_on → Simple indicator if lights are being used
 
-   
-   
+3. base model trainning
+
+4. Deep learnnig model 
+   Data sets : already created X_train_scaled.npy and Y_train_scaled.npy
+
+
+1. Baseline ModelsReason for selection:Simple models such as Linear Regression, Random Forest, and XGBoost were developed as baseline models to establish performance benchmarks.These models help in understanding the minimum expected performance and allow fair comparison with deep learning models. Linear Regression provides a simple linear benchmark, while Random Forest and XGBoost capture non-linear relationships and feature interactions. By comparing deep learning results against these baselines, we can evaluate whether the added complexity of neural networks actually improves predictive performance.2. Deep Learning Model DesignReason for architecture choice:Since the dataset is a multivariate time-series, architectures that can capture temporal dependencies were selected.
+LSTM was chosen as the primary model because it is effective at learning long-term dependencies in sequential data.
+GRU was also considered as a lighter alternative to LSTM with fewer parameters and faster training.
+A CNN-LSTM hybrid can be experimented with to extract local patterns using CNN layers before learning sequential dependencies with LSTM.
+The final architecture used a 2-layer LSTM (64 → 32 units) followed by dense layers. This design provides a balance between model capacity and complexity, making it suitable for the size of the dataset without excessive overfitting.3. Activation Functions and OptimizersActivation Functions:
+tanh was used in LSTM layers (default) because it is well-suited for sequential modeling and helps regulate the flow of information through gates.
+ReLU was used in the dense hidden layer to introduce non-linearity and improve training speed.
+A linear activation was used in the output layer since this is a regression problem.
+Optimizer:
+Adam optimizer was selected because it combines the advantages of AdaGrad and RMSProp.
+It adapts the learning rate for each parameter and generally converges faster and more stably on time-series and deep learning tasks.
+4. Loss FunctionReason for selection:Mean Squared Error (MSE) was used as the loss function because this is a regression task.MSE penalizes larger errors more heavily, which is important in energy prediction where large deviations (energy spikes) should be minimized. Additionally, MAE was tracked as a secondary metric because it is more interpretable and less sensitive to extreme outliers.5. Model Complexity and RegularizationTechniques used to prevent overfitting:
+Dropout layers (rate = 0.2) were added after LSTM layers to randomly deactivate neurons during training, reducing co-adaptation.
+Early Stopping was implemented to stop training when validation loss stopped improving, preventing unnecessary overfitting.
+Learning Rate Scheduling (ReduceLROnPlateau) was used to reduce the learning rate when the model stopped improving.
+The model architecture was kept relatively simple (2 LSTM layers) to avoid excessive complexity given the dataset size.
+These regularization techniques help improve generalization performance on unseen test data.
