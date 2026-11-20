@@ -30,4 +30,5 @@ class DataIngestorCSV:
 
         frame["date"] = pd.to_datetime(frame["date"], errors="raise")
         frame = frame.set_index("date").sort_index()
+        
         return frame

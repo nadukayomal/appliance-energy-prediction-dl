@@ -244,6 +244,8 @@ The data pipeline is implemented by [TemporalDataPipeline](/D:/portfolio%20proje
 
 The preprocessed arrays and serialized preprocessing objects are written to [data/processed/](/D:/portfolio%20projects/energy-consumption/data/processed) and [artifacts/](/D:/portfolio%20projects/energy-consumption/artifacts).
 
+Data-pipeline progress is logged to the console and [artifacts/logs/data_pipeline.log](./artifacts/logs/data_pipeline.log), with a blank line between each step.
+
 ---
 
 ## Model Pipeline
@@ -305,46 +307,27 @@ The verified best ML model is Linear Regression by MAE. LSTM and GRU produce com
 
 ## Inference
 
-The [inference pipeline](/D:/portfolio%20projects/energy-consumption/pipeline/inference_pipeline.py) loads:
-
-- The best serialized machine-learning model
-- LSTM and/or GRU checkpoints
-- Feature scaler
-- Target scaler
-- Selected feature list
-- Fitted outlier clipping configuration
-
-The interface accepts chronological raw observations ending with the row to forecast. It applies the same feature engineering and preprocessing sequence, then returns:
-
-- ML prediction
-- LSTM prediction
-- GRU prediction
-- Absolute differences between model outputs
-
-Running the pipeline currently uses the final test-period context:
+Edit the `data` dictionary at the bottom of [inference_pipeline.py](./pipeline/inference_pipeline.py) with the forecast date and sensor readings, then run:
 
 ```powershell
 python pipeline/inference_pipeline.py
 ```
 
-Example result:
+The pipeline uses `data` as the forecast row and reads the 45 preceding observations from `data/raw/energy_data_set.csv` to create the 46-row context required for lag features and DL sequences. The date must have at least 45 earlier dataset records. Provide all sensor fields; `Appliances` is optional and is masked for the forecast row to prevent target leakage.
 
-```json
-{
-  "LSTM": {
-    "ML prediction": 320.0066,
-    "DL prediction": 244.154,
-    "Absolute difference": 75.8526
-  },
-  "GRU": {
-    "ML prediction": 320.0066,
-    "DL prediction": 212.9331,
-    "Absolute difference": 107.0734
-  }
-}
+The pipeline predicts with the best saved ML model, Random Forest, XGBoost, LSTM, and GRU, and prints one named prediction per line:
+
+```text
+LinearRegression (Best ML) : <prediction> Wh
+Random Forest (ML) : <prediction> Wh
+XGBoost (ML) : <prediction> Wh
+LSTM (DL) : <prediction> Wh
+GRU (DL) : <prediction> Wh
 ```
 
-Predictions are expressed in the original appliance-energy unit.
+Inference progress is written to the console and [artifacts/logs/inference.log](./artifacts/logs/inference.log), with a blank line between log entries. It records dataset loading and context creation, outlier clipping, target masking, feature engineering, scaling, model loading, and each prediction. Raw sensor values are not logged.
+
+Predictions are expressed in watt-hours (Wh).
 
 ---
 

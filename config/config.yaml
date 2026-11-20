@@ -199,6 +199,8 @@ logging:
   level: "INFO"
   format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
   file: "artifacts/logs/training.log"
+  data_pipeline_file: "artifacts/logs/data_pipeline.log"
+  inference_file: "artifacts/logs/inference.log"
 
 reproducibility:
   random_state: 42

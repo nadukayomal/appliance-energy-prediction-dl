@@ -24,4 +24,9 @@ class ModelEvaluator:
         r2 = r2_score(y_true, y_pred)
         epsilon = np.finfo(np.float64).eps
         mape = float(np.mean(np.abs((y_true - y_pred) / np.maximum(np.abs(y_true), epsilon))) * 100)
-        return {"MAE": mae, "RMSE": rmse, "MAPE": mape, "R2": r2}
+        
+        return {
+               "MAE": mae, 
+               "RMSE": rmse, 
+               "MAPE": mape, 
+               "R2": r2}

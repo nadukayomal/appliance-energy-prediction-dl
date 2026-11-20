@@ -42,4 +42,5 @@ class FeatureEngineer:
         result["temp_x_humidity"] = result["temp_in_mean"] * result["rh_in_mean"]
         result["in_out_temp_diff"] = result["temp_in_mean"] - result["T_out"]
         result["lights_on"] = (result["lights"] > 0).astype(int)
+        
         return result
